@@ -1,11 +1,9 @@
 import os
 import aiohttp
 from typing import Dict
-from typedefs import StrOrURL
-
 
 class Client:
-    async def fetch(self, endpoint: StrOrURL, 
+    async def fetch(self, endpoint: str, 
                     params: dict = {},
                     data: dict = {},
                     method='get',
@@ -26,10 +24,12 @@ class Client:
                 # TODO: Response error handle 
                 return await resp.json()
 
-    async def generate_user(self, gender, nat,*args, **kwargs):
+    async def generate_user(self, *args, **kwargs):
         params = {
-            'gender': gender,
-            'nat': nat
+            'gender': kwargs.get('gender'),
+            'nat': kwargs.get('nat'),
+            'results': kwargs.get('results')
         }
-        response = await self.fetch(endpoint='', params=params)
+        clean_data = { key: value for key, value in params.items() if value is not None}
+        response = await self.fetch(endpoint='', params=clean_data)
         return response
